@@ -36,8 +36,15 @@ module.exports = {
         overlay: {
             warnings: false,
             errors: true
+        },
+         // 配置反向代理
+    proxy: {
+        // 只要请求 /api这样的接口，就走代理
+        '/api': {
+            target: 'http://ihrm-java.itheima.net'
         }
-    },
+    }
+},
     configureWebpack: {
         // provide the app's title in webpack's name field, so that
         // it can be accessed in index.html to inject the correct title.
