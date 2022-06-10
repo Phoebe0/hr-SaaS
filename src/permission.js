@@ -1,6 +1,8 @@
 // 这个文件是配合导航守卫来做页面跳转拦截的
 import router from '@/router'
 import store from '@/store'
+import Nprogress from 'nprogress'
+import 'nprogress/nprogress.css'
 // 路由前置导航守卫 router.beforeEach(...)
 
 // to 去哪里  是一个路由信息对象（记录要去的页面路由信息）
@@ -11,6 +13,9 @@ import store from '@/store'
 // 如果登陆过，不允许访问登陆页面 如果访问登录页则强制去首页
 const whitelist = ['/login', '/404'] // 白名单
 router.beforeEach((to, from, next) => {
+  // 开启进度条
+  Nprogress.start()
+
   // 检测是否登陆过 ----判断token
   const token = store.getters.token
   // 如果有token 并且要去的页面是登录页
@@ -18,6 +23,7 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       // 直接去首页
       next('/')
+      Nprogress.done()
     } else {
       // 想去别的页面 就放行
       next()
@@ -30,9 +36,14 @@ router.beforeEach((to, from, next) => {
     } else {
       // 想去有权限的页面  强制去登录页
       next('/login')
+      Nprogress.done()
     }
   }
   // next()
 })
-// 路由后置导航守卫
-// router.afterEach(...)
+// 路由后置导航守卫  router.afterEach(...)
+// 注意：被next强制跳转的页面是不会经过后置导航守卫的
+router.afterEach((to, from) => {
+  // 关闭进度条
+  Nprogress.done()
+})

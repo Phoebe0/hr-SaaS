@@ -5,6 +5,9 @@
 @import './sidebar.scss';
 @import './common.scss';
 
+#nprogress .bar {
+  background: red !important; //自定义颜色
+}
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
