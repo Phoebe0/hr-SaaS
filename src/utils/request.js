@@ -26,9 +26,12 @@ service.interceptors.response.use(function(response) {
     Message.success(response.data.message)
   } else {
     Message.error(response.data.message)
+    // 失败了，不能再跳转了
+    // 抛出异常 阻止后续代码的执行
     return Promise.reject(response.data.message)
   }
-  return response
+  // response 是每次相应成功的对象，
+  return response // 将响应的结果返回给客户端
 }, function(error) {
   // 对响应错误做点什么
   return Promise.reject(error)

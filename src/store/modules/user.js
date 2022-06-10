@@ -19,7 +19,7 @@ export default {
   actions: {
     // 登录
     async login({ commit }, loginform) {
-      const res = await reqLogin(loginform)
+      const res = await reqLogin(loginform) // await 拿到的是成功的结果
       const { data } = res.data
       if (res.data.success) commit('setTokenInfo', data)
 

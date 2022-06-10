@@ -104,7 +104,7 @@ export default {
     },
     handleLogin() {
       // 1. 表单的预校验
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate(async valid => {
         // 2. 预校验通过
         if (valid) {
           // 3. 开启loading效果
@@ -115,11 +115,17 @@ export default {
           // })
 
           // 4. 触发action发送登录请求
-          this.$store.dispatch('user/login', this.loginForm).then(res => {
-            this.$router.push('/')
-          }).finally(() => {
+          try {
+            const data = await this.$store.dispatch('user/login', this.loginForm)
+            console.log(data)
+          // 跳转到首页
+          this.$router.push('/')
+          } catch {
+            console.log('失败')
+          }
+          // 关闭loading
           this.loading = false
-  })
+
   // then是成功后执行 catch是失败后执行 finally是无论成功或失败都执行
         } else {
           console.log('error submit!!')
