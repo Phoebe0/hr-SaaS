@@ -1,6 +1,6 @@
 // 用户模块  先初始化一个空模块，后期自己写
 import { reqGetUserDetailById, reqGetUserInfo, reqLogin } from '@/api/user'
-import { setToken, getToken } from '@/utils/auth'
+import { setToken, getToken, removeToken } from '@/utils/auth'
 export default {
   namespaced: true,
   state: {
@@ -16,10 +16,20 @@ export default {
       // 存在cookie中
       setToken(token)
     },
-
+    // 设置用户信息
     setUserInfo(state, info) {
       state.userInfo = info
+    },
+    // 清除token
+    removeToken(state) {
+      state.token = ''
+      removeToken()
+    },
+    // 清除个人信息
+    removeUserInfo(state) {
+      state.userInfo = {}
     }
+
   },
   actions: {
     // 登录
@@ -39,6 +49,12 @@ export default {
       const fullUserInfo = { ...data, ...data2 }
       console.log(fullUserInfo)
       context.commit('setUserInfo', fullUserInfo.data.data)
+    },
+
+    // 退出功能
+    logout({ commit }) {
+      commit('removeToken')
+      commit('removeUserInfo')
     }
   }
 

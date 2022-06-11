@@ -14,13 +14,19 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
-import '@/directives' // 自定义指令
+// import { imgerr } from '@/directives'// 自定义指令按需导入
+import * as directives from '@/directives' // 将directives中的所有按需导出的指令批量全部注册
+
+// Vue.directive('imgerr', imgerr)
+
+for (const k in directives) {
+    Vue.directive(k, directives[k])
+}
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
-
 Vue.config.productionTip = false
 
 new Vue({

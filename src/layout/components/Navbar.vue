@@ -2,8 +2,8 @@
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
     <div class="app-breadcrumb">
-      江苏传智播客教育科技股份有限公司
-      <span class="breadBtn">体验版</span>
+      XXX 有限公司
+      <span class="breadBtn">Beta版</span>
     </div>
     <!-- <breadcrumb class="breadcrumb-container" /> -->
 
@@ -63,9 +63,29 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    // 退出功能
+     logout() {
+      console.log('退出系统')
+       this.$confirm('确认退出系统?', '提示', {
+
+          type: 'warning'
+        }).then(() => {
+          // 点了成功会执行的代码
+        // 2. 点了确定，要清楚个人信息 token
+        this.$store.dispatch('user/logout')
+        // 3. 跳转至登陆页面
+        this.$router.push('/login')
+        // 4. 提示退出成功
+          this.$message({
+            type: 'success',
+            message: '退出系统成功'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: '取消退出'
+          })
+        })
     }
   }
 }

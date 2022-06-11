@@ -1,6 +1,7 @@
 import axios from 'axios' // 创建一个axios的实例
 import { Message } from 'element-ui'
 import store from '@/store'
+import router from '@/router'
 
 // 创建axios实例配置基地址
 const service = axios.create({
@@ -40,6 +41,14 @@ service.interceptors.response.use(function(response) {
   return response // 将响应的结果返回给客户端
 }, function(error) {
   // 对响应错误做点什么
+  if (error.response.status === 401 && error.response.data.code === 10002) {
+    console.log('token过期')
+    Message.warning('token过期了，请重新登录')
+    // token过期后清理过期的token和个人信息
+    store.dispatch('user/logout')
+    // 重新登陆
+    router.push('/login')
+  }
   return Promise.reject(error)
 })
 
