@@ -2,6 +2,7 @@
   <div :class="{'has-logo':showLogo}">
     <!-- 侧边栏logo -->
     <logo v-if="showLogo" :collapse="isCollapse" />
+    <!-- el-scrollbar 菜单栏滚动条，菜单项过多就会展示 -->
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"

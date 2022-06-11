@@ -63,7 +63,7 @@ export default {
     return {
       // 表单关联的数据
       loginForm: {
-        mobile: '13800000001',
+        mobile: '13800000002',
         password: '123456'
       },
       // 表单校验规则
