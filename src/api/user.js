@@ -3,9 +3,30 @@
 
 // 用户相关的接口模块
 import request from '@/utils/request'
+// import store from '@/store'
 
+// 登录接口
 export function reqLogin(data) {
   // axios 中能.then  说明axios请求是一个promise
   return request.post('/sys/login', data)
 }
 
+// 获取用户信息接口
+export function reqGetUserInfo() {
+  return request({
+    method: 'post',
+    url: 'sys/profile'
+    // headers在以后的请求中会经常用到，所以可以把它挂载到请求拦截器中
+    // headers: {
+    //   Authorization: 'Bearer ' + store.getters.token
+    // }
+  })
+}
+
+// 获取用户基本信息
+export function reqGetUserDetailById(id) {
+  return request({
+    method: 'get',
+    url: `/sys/user/${id}`
+  })
+}

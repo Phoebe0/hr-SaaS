@@ -1,5 +1,7 @@
 import axios from 'axios' // 创建一个axios的实例
 import { Message } from 'element-ui'
+import store from '@/store'
+
 // 创建axios实例配置基地址
 const service = axios.create({
   // process.env是node环境内置的语法，可以获取我们是处于那种开发环境，项目启动根据运行环境自动执行
@@ -13,6 +15,10 @@ const service = axios.create({
 service.interceptors.request.use(function(config) {
   // 在发送请求之前做些什么
   console.log('请求拦截')
+  if (store.getters.token) {
+    // config是请求的配置对象，config中的headers就是请求头，可以在请求拦截器中统一挂载token
+    config.headers.Authorization = 'Bearer ' + store.getters.token
+  }
   return config
 }, function(error) {
   // 对请求错误做些什么

@@ -1,11 +1,12 @@
 // 用户模块  先初始化一个空模块，后期自己写
-import { reqLogin } from '@/api/user'
+import { reqGetUserDetailById, reqGetUserInfo, reqLogin } from '@/api/user'
 import { setToken, getToken } from '@/utils/auth'
 export default {
   namespaced: true,
   state: {
     // 优先从本地获取
-    token: getToken() || ''
+    token: getToken() || '',
+    userInfo: {}
   },
   mutations: {
     // 存储token
@@ -14,6 +15,10 @@ export default {
       state.token = token
       // 存在cookie中
       setToken(token)
+    },
+
+    setUserInfo(state, info) {
+      state.userInfo = info
     }
   },
   actions: {
@@ -24,6 +29,16 @@ export default {
       if (res.data.success) commit('setTokenInfo', data)
 
       return res.data // 要在页面组件中做消息提示
+    },
+
+    // 获取用户资料
+    async getUserInfo(context) {
+      const data = await reqGetUserInfo() // 获取用户简单信息
+      const data2 = await reqGetUserDetailById(data.data.data.userId)
+
+      const fullUserInfo = { ...data, ...data2 }
+      console.log(fullUserInfo)
+      context.commit('setUserInfo', fullUserInfo.data.data)
     }
   }
 

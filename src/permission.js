@@ -12,7 +12,7 @@ import 'nprogress/nprogress.css'
 // 例如：如果没有登陆 不允许访问有权限的页面
 // 如果登陆过，不允许访问登陆页面 如果访问登录页则强制去首页
 const whitelist = ['/login', '/404'] // 白名单
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   // 开启进度条
   Nprogress.start()
 
@@ -25,7 +25,13 @@ router.beforeEach((to, from, next) => {
       next('/')
       Nprogress.done()
     } else {
-      // 想去别的页面 就放行
+      console.log('获取信息')
+      // 不管路由跳转几次，只需要获取一次个人信息，所以要加判断
+      if (!store.getters.name) {
+        // 判断是否存在个人信息了，如果不存在 则获取个人信息
+        await store.dispatch('user/getUserInfo')
+      }
+      // await store.dispatch('user/getUserInfo')
       next()
     }
   } else {
