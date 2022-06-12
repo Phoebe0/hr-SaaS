@@ -40,6 +40,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
+      // title 是控制文本  icon是图标
       meta: { title: '首页', icon: 'dashboard' }
     }]
   }
