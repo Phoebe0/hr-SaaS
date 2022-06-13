@@ -1,4 +1,5 @@
 <template>
+
   <el-row :gutter="20" style="width: 100%">
     <el-col :span="16">{{ data.name }}</el-col>
     <el-col :span="8">
@@ -20,6 +21,7 @@
       </el-row>
     </el-col>
   </el-row>
+
 </template>
 
 <script>
@@ -36,11 +38,17 @@ export default {
     default: true
   }
  },
+ data() {
+  return {
+
+  }
+ },
  methods: {
   handleCommand(command) {
     // 添加
         if (command === 'add') {
-          console.log('添加')
+          // 通知父组件 修改dialogVisible布尔值
+          this.$emit('showDialog')
         }
         // 查看编辑
         if (command === 'edit') {

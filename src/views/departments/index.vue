@@ -4,13 +4,23 @@
       <el-card>
         <!-- 标题 -->
         <!-- el-row被分成24份 -->
-        <TreeTools :data="{name: 'XXXX股份有限公司'}" :is-root="false" style="border-bottom: 1px solid #999" />
+        <TreeTools
+          :data="{name: 'XXXX股份有限公司'}"
+          :is-root="false"
+          style="border-bottom: 1px solid #999"
+          @showDialog="dialogVisible=true"
+        />
+
+        <!-- 部门列表 -->
         <el-tree :data="list" :props="defaultProps" default-expand-all>
           <!-- data是组件内部作用域插槽携带的数据，表示的是每一行的数据 -->
           <template #default="{data}">
-            <TreeTools :data="data" @reload="getDepts" />
+            <TreeTools :data="data" @reload="getDepts" @showDialog="dialogVisible=true" />
           </template>
         </el-tree>
+
+        <!-- 对话框组件 -->
+        <AddDepts :dialog-visible="dialogVisible" @closeDialog="dialogVisible=false" />
       </el-card>
 
     </div>
@@ -19,12 +29,14 @@
 
 <script>
 import TreeTools from './components/TreeTools.vue'
+import AddDepts from './components/AddDepts.vue'
 import { reqGetDepartments } from '@/api/department'
 import { tranListToTreeData } from '@/utils/index'
 export default {
   name: 'Departments',
   components: {
-    TreeTools
+    TreeTools,
+    AddDepts
   },
   data() {
     return {
@@ -32,7 +44,8 @@ export default {
       defaultProps: {
           children: 'children',
           label: 'name'
-        }
+        },
+        dialogVisible: false // 控制对话框显示与隐藏
     }
   },
   created() {
