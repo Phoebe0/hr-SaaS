@@ -48,8 +48,8 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
-        approvalsRouter,
         departmentsRouter,
+        approvalsRouter,
         employeesRouter,
         permissionRouter,
         attendancesRouter,

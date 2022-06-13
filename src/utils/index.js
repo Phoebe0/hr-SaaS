@@ -116,3 +116,17 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 处理树形数据的方法
+export function tranListToTreeData(depts, pid) {
+  const arr = []
+  depts.forEach(item => {
+    if (item.pid === pid) {
+      // 如果是一级部门 ， 筛选过来
+      const children = tranListToTreeData(depts, item.id)
+      item.children = children
+      arr.push(item)
+    }
+  })
+  return arr
+}

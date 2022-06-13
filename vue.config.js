@@ -42,8 +42,8 @@ module.exports = {
         // 只要请求 /api这样的接口，就走代理
         '/api': {
             // target: 'http://ihrm-java.itheima.net'
-            // target: 'http://103.47.83.172.3000'
-            target: 'http://8.131.91.46:6868'
+            target: 'http://103.47.83.172:3000'
+            // target: 'http://8.131.91.46:6868'
         }
     }
 },

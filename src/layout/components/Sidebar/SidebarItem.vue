@@ -81,8 +81,8 @@ export default {
           return true
         }
       })
-      console.log(showingChildren)
-      console.log(showingChildren.length)
+      // console.log(showingChildren)
+      // console.log(showingChildren.length)
 
       // 如果筛选出来的数组长度为1，就把子路由当作一级菜单展示
       if (showingChildren.length === 1) {

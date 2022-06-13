@@ -28,7 +28,7 @@ service.interceptors.request.use(function(config) {
 
 // 添加响应拦截器
 service.interceptors.response.use(function(response) {
-  console.log(response)
+  // console.log(response)
   if (response.data.success) {
     Message.success(response.data.message)
   } else {
