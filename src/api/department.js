@@ -9,3 +9,12 @@ export function reqGetDepartments() {
 export function reqDelDept(id) {
   return request.delete(`/company/department/${id}`)
 }
+
+// 新增部门 post发送请求携带参数
+export const reqAddDept = data => request.post('/company/department', data)
+
+// 根据id查询部门详情
+export const reqGetDeptInfoById = id => request.get(`/company/department/${id}`)
+
+// 根据id更新部门详情
+export const reqUpdateDeptInfo = data => request.put(`/company/department/${data.id}`, data)

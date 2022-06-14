@@ -56,7 +56,6 @@
 </template>
 
 <script>
-// import { reqLogin } from '@/api/user'
 export default {
   name: 'Login',
   data() {
@@ -181,10 +180,7 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
   }
-  .el-form-item__error {
-    color: #fff;
-    font-size: 14px;
- }
+
 }
 </style>
 
@@ -192,6 +188,11 @@ $cursor: #fff;
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray: #407ffe;
+
+  ::v-deep .el-form-item__error {
+    color: #fff;
+    font-size: 14px;
+ }
 
 .login-container {
   min-height: 100%;

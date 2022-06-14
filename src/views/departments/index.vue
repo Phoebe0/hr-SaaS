@@ -5,22 +5,34 @@
         <!-- 标题 -->
         <!-- el-row被分成24份 -->
         <TreeTools
-          :data="{name: 'XXXX股份有限公司'}"
+          :data="companyInfo"
           :is-root="false"
           style="border-bottom: 1px solid #999"
-          @showDialog="dialogVisible=true"
+          @showDialog="showDialog"
         />
 
         <!-- 部门列表 -->
         <el-tree :data="list" :props="defaultProps" default-expand-all>
           <!-- data是组件内部作用域插槽携带的数据，表示的是每一行的数据 -->
           <template #default="{data}">
-            <TreeTools :data="data" @reload="getDepts" @showDialog="dialogVisible=true" />
+            <TreeTools
+              :data="data"
+              @reload="getDepts"
+              @showDialog="showDialog"
+              @showEditDialog="showEditDialog"
+            />
           </template>
         </el-tree>
 
         <!-- 对话框组件 -->
-        <AddDepts :dialog-visible="dialogVisible" @closeDialog="dialogVisible=false" />
+        <AddDepts
+          :id="id"
+          ref="addDeptRef"
+          :dialog-visible="dialogVisible"
+          :source-depts="sourceDepts"
+          @closeDialog="dialogVisible=false"
+          @reload="reload"
+        />
       </el-card>
 
     </div>
@@ -45,7 +57,10 @@ export default {
           children: 'children',
           label: 'name'
         },
-        dialogVisible: false // 控制对话框显示与隐藏
+        dialogVisible: false, // 控制对话框显示与隐藏
+        sourceDepts: [], // 原始的部门列表数据
+        id: '', // 点击添加存储部门的id
+        companyInfo: { name: 'XXX公司', manager: '负责人', id: '' }
     }
   },
   created() {
@@ -57,8 +72,24 @@ export default {
       const { data } = await reqGetDepartments()
       // console.log(data)
       this.list = tranListToTreeData(data.data.depts, '')
+      this.sourceDepts = data.data.depts // 存储一份原始的部门列表数据
+    },
+    // 点击添加展示对话框并接受传递部门的id
+    showDialog(id) {
+      this.dialogVisible = true
+      console.log(id)
+      this.id = id
+    },
+    // 确定提交完成，子组件通知父组件关闭对话框并重新获取部门列表
+    reload() {
+      this.dialogVisible = false
+      this.getDepts()
+    },
+    // 点击编辑显示对话框
+    showEditDialog(data) {
+      this.$refs.addDeptRef.showDeptInfo(data.id) // 将点击的部门信息给到子组件 让子组件拿着这个id去获取部门信息
+      this.dialogVisible = true
     }
-
   }
 }
 </script>
@@ -101,6 +132,17 @@ export default {
       height: 16px;
       font-size: 16px;
       background-size: 16px;
+    }
+
+    // 深度选择器
+    // 作用某些类名 ， 但是样式做用不上，原因是类名压根不在组件中
+    // 这时候就要使用深度选择器来讲这个样式穿透到组件内部
+    // scss ::v-deep
+    // less /deep/
+    // css >>>
+
+    ::v-deep .el-tree-node__content {
+      margin-top: 10px !important;
     }
 
 }

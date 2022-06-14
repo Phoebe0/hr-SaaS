@@ -3,8 +3,8 @@
   <el-row :gutter="20" style="width: 100%">
     <el-col :span="16">{{ data.name }}</el-col>
     <el-col :span="8">
-      <el-row>
-        <el-col :span="12">负责人</el-col>
+      <el-row :gutter="50">
+        <el-col :span="12" style="text-align: right">{{ data.manager }}</el-col>
         <el-col :span="12">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
@@ -38,21 +38,18 @@ export default {
     default: true
   }
  },
- data() {
-  return {
 
-  }
- },
  methods: {
   handleCommand(command) {
     // 添加
         if (command === 'add') {
-          // 通知父组件 修改dialogVisible布尔值
-          this.$emit('showDialog')
+          // 通知父组件 修改dialogVisible布尔值,并且携带点击部门的id
+          this.$emit('showDialog', this.data.id)
         }
         // 查看编辑
         if (command === 'edit') {
-          console.log('编辑')
+          // console.log('编辑')
+          this.$emit('showEditDialog', this.data)
         }
         // 删除
         if (command === 'del') {
