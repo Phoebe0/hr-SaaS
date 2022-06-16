@@ -5,3 +5,8 @@ import request from '@/utils/request'
 export const reqGetSimpleList = () => {
   return request.get('/sys/user/simple')
 }
+
+// 获取员工列表
+export const reqGetEmployeesList = (page, size) => request.get('/sys/user', {
+  params: { page, size }
+})
