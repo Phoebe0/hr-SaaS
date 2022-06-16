@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="添加部门信息"
+    :title="title"
     :visible="dialogVisible"
     width="50%"
     @close="closeDialog"
@@ -14,7 +14,13 @@
         4. input v-model
 
      -->
-    <el-form ref="formRef" :model="form" label-width="100px" :rules="formRules">
+    <el-form
+      ref="formRef"
+
+      :model="form"
+      label-width="100px"
+      :rules="formRules"
+    >
       <el-form-item label="部门名称" prop="name">
         <el-input v-model="form.name" />
       </el-form-item>
@@ -66,17 +72,23 @@ export default {
   },
   data() {
     // value是输入框输入的值 ，callback是一个放行函数 ，callback()表示校验通过 ，callback(new Error('提示信息'))
+    // 名称校验规则
     const checkNameRepeat = (rule, value, callback) => {
       console.log(value)
       console.log(this.sourceDepts)
+      // 如果是处于编辑状态 并且校验的名称是当前编辑部门的名称 就放行
+      if (this.form.id && this.editDept.name === value) return callback()
       // 判断value和所有的部门名称不重复
       const boo = this.sourceDepts.some(item => item.name === value.trim())
       console.log(boo)
       boo ? callback(new Error(`${value}已存在！`)) : callback()
     }
+    // 编码校验规则
     const checkCodeRepeat = (rule, value, callback) => {
       console.log(value)
       console.log(this.sourceDepts)
+      // 如果是处于编辑状态 并且校验的编码是当前编辑部门的编码 就放行
+      if (this.form.id && this.editDept.code === value) return callback()
       // 判断value和所有的部门名称不重复
       const boo = this.sourceDepts.some(item => item.code === value.trim())
       console.log(boo)
@@ -110,9 +122,13 @@ export default {
           { required: true, message: '请输入部门介绍', trigger: ['change', 'blur'] }
         ]
       },
-      simpleList: [] // 部门负责人列表
+      simpleList: [], // 部门负责人列表
+      title: '添加部门',
+      loading: true,
+      editDept: {}
     }
   },
+
   created() {
     this.getSimpleList()
   },
@@ -161,10 +177,16 @@ export default {
 
     // 做数据回显
     async showDeptInfo(id) {
+      // // 发送请求前开启loading
+      // this.loading = true
       // 根据id查询部门详情
      const { data } = await reqGetDeptInfoById(id)
-     console.log(data)
+    //  console.log(data)
      this.form = data.data
+    //  这里重新定义一个对象 ，并将部门信息赋值给它，用于比较
+     this.editDept = { ...data.data } // 不能直接赋值，因为复杂数据类型赋值的是地址，会和上面form的地址相同，
+    //  // 请求结束后关闭loading
+    //   this.loading = false
     }
   }
 }

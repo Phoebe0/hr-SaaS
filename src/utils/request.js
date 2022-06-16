@@ -1,5 +1,5 @@
 import axios from 'axios' // 创建一个axios的实例
-import { Message } from 'element-ui'
+import { Message, Loading } from 'element-ui'
 import store from '@/store'
 import router from '@/router'
 
@@ -13,7 +13,14 @@ const service = axios.create({
 })
 
 // 添加请求拦截器
+let loading = null
 service.interceptors.request.use(function(config) {
+   loading = Loading.service({
+    lock: true,
+    text: '大大请稍等~',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.6)'
+  })
   // 在发送请求之前做些什么
   console.log('请求拦截')
   if (store.getters.token) {
@@ -37,9 +44,11 @@ service.interceptors.response.use(function(response) {
     // 抛出异常 阻止后续代码的执行
     return Promise.reject(response.data.message)
   }
+  loading.close()
   // response 是每次相应成功的对象，
   return response // 将响应的结果返回给客户端
 }, function(error) {
+  loading.close()
   // 对响应错误做点什么
   if (error.response.status === 401 && error.response.data.code === 10002) {
     console.log('token过期')

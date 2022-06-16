@@ -76,8 +76,8 @@ export default {
     },
     // 点击添加展示对话框并接受传递部门的id
     showDialog(id) {
+      this.$refs.addDeptRef.title = '添加部门'
       this.dialogVisible = true
-      console.log(id)
       this.id = id
     },
     // 确定提交完成，子组件通知父组件关闭对话框并重新获取部门列表
@@ -87,6 +87,7 @@ export default {
     },
     // 点击编辑显示对话框
     showEditDialog(data) {
+      this.$refs.addDeptRef.title = '编辑部门'
       this.$refs.addDeptRef.showDeptInfo(data.id) // 将点击的部门信息给到子组件 让子组件拿着这个id去获取部门信息
       this.dialogVisible = true
     }
