@@ -10,3 +10,6 @@ export const reqGetSimpleList = () => {
 export const reqGetEmployeesList = (page, size) => request.get('/sys/user', {
   params: { page, size }
 })
+
+// 新增员工
+export const reqAddEmployee = data => request.post('/sys/user', data)

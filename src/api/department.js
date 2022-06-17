@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 获取部门信息
+// 获取所有部门列表
 export function reqGetDepartments() {
   return request.get('/company/department')
 }

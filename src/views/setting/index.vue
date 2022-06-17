@@ -86,28 +86,6 @@
               @current-change="handleCurrentChange"
             />
 
-            <!-- 对话框 -->
-            <el-dialog
-              :title="title"
-              :visible="showDialog"
-              width="60%"
-              center
-              @close="closeAdd"
-            >
-              <el-form ref="roleForm" :model="form" :rules="rules" label-width="100px">
-                <el-form-item label="角色名称" prop="name">
-                  <el-input v-model="form.name" placeholder="请输入角色名称" />
-                </el-form-item>
-                <el-form-item label="角色描述" prop="description">
-                  <el-input v-model="form.description" placeholder="请输入角色描述" />
-                </el-form-item>
-              </el-form>
-
-              <template #footer>
-                <el-button @click="closeAdd">取消</el-button>
-                <el-button type="primary" @click="addRole">确认</el-button>
-              </template>
-            </el-dialog>
           </el-tab-pane>
 
           <el-tab-pane label="公司信息" name="company">
@@ -126,6 +104,29 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
+
+          <!-- 对话框 -->
+          <el-dialog
+            :title="title"
+            :visible="showDialog"
+            width="60%"
+            center
+            @close="closeAdd"
+          >
+            <el-form ref="roleForm" :model="form" :rules="rules" label-width="100px">
+              <el-form-item label="角色名称" prop="name">
+                <el-input v-model="form.name" placeholder="请输入角色名称" />
+              </el-form-item>
+              <el-form-item label="角色描述" prop="description">
+                <el-input v-model="form.description" placeholder="请输入角色描述" />
+              </el-form-item>
+            </el-form>
+
+            <template #footer>
+              <el-button @click="closeAdd">取消</el-button>
+              <el-button type="primary" @click="addRole">确认</el-button>
+            </template>
+          </el-dialog>
 
         </el-tabs>
       </el-card>
@@ -154,8 +155,10 @@ export default {
       title: '新增角色',
       rules: {
         name: [
-          { required: true, message: '请输入角色名称', trigger: ['change', 'blur'] }
+          { required: true, message: '请输入角色名称', trigger: ['change', 'blur'] },
+          { min: 2, max: 10, message: '角色名称要求2-10个字符', trigger: ['change', 'blur'] }
         ],
+
         description: [
           { required: true, message: '请输入角色描述', trigger: ['change', 'blur'] }
         ]
@@ -239,11 +242,11 @@ export default {
         // 关闭弹框
         this.showDialog = false
         // 重置表单数据
-        this.$refs.roleForm.resetFields()
         this.form = {
           name: '',
           description: ''
-  }
+      }
+        this.$refs.roleForm.resetFields()
       },
       // 删除角色
       deleteRow(id) {

@@ -16,9 +16,14 @@ import '@/icons' // icon
 import '@/permission' // permission control
 // import { imgerr } from '@/directives'// 自定义指令按需导入
 import * as directives from '@/directives' // 将directives中的所有按需导出的指令批量全部注册
-import PageTools from '@/components/PageTools'
 
-Vue.component(PageTools.name, PageTools)
+import MyUI from '@/components/index'
+import moment from 'moment'
+
+Vue.use(MyUI)
+Vue.filter('formatDate', (val, payload) => {
+    return moment(val).format(payload)
+})
 
 // Vue.directive('imgerr', imgerr)
 

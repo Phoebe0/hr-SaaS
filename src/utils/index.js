@@ -9,6 +9,7 @@
  * @param {string} cFormat
  * @returns {string | null}
  */
+import moment from 'moment'
 export function parseTime(time, cFormat) {
   if (arguments.length === 0 || !time) {
     return null
@@ -123,10 +124,16 @@ export function tranListToTreeData(depts, pid) {
   depts.forEach(item => {
     if (item.pid === pid) {
       // 如果是一级部门 ， 筛选过来
+      // 将1级部门的id当作查找条件，筛选二级部门
       const children = tranListToTreeData(depts, item.id)
       item.children = children
       arr.push(item)
     }
   })
   return arr
+}
+
+// 日期格式化的方法
+export function formatDate(time) {
+  return moment(time).format('YYYY-MM-DD')
 }
