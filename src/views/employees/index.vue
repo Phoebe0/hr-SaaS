@@ -36,13 +36,13 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
-            <template #default>
+            <template #default="{row}">
               <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
               <el-button type="text" size="small">角色</el-button>
-              <el-button type="text" size="small">删除</el-button>
+              <el-button type="text" size="small" @click="delEmployee(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { reqGetEmployeesList } from '@/api/employees'
+import { reqDelEmployee, reqGetEmployeesList } from '@/api/employees'
 import employeesMenu from '@/api/constant/employees'
 import AddEmployees from './components/AddEmployees.vue'
 import { formatDate } from '@/utils/index'
@@ -109,6 +109,7 @@ export default {
       this.page = value
       this.getEmployeesList()
     },
+    // 员工序号
     indexMethod(index) {
        return index + (this.page - 1) * this.size + 1
     },
@@ -126,11 +127,22 @@ export default {
   //  日期格式化
   formatDate(time) {
     return formatDate(time) // 直接调用工具函数
+  },
+  // 删除员工
+  delEmployee(id) {
+    this.$confirm('确定删除该员工?', '提示', {
+          type: 'warning'
+        }).then(async() => {
+          await reqDelEmployee(id)
+          if (this.tableData.length === 1 && this.page > 1) {
+            this.page--
+            // this.getEmployeesList()
+          }
+          this.getEmployeesList()
+        }).catch(() => {
+          this.$message.info('已取消')
+        })
   }
-  // // 删除员工
-  // delEmployee() {
-
-  // }
   }
 }
 </script>

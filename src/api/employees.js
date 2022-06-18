@@ -13,3 +13,11 @@ export const reqGetEmployeesList = (page, size) => request.get('/sys/user', {
 
 // 新增员工
 export const reqAddEmployee = data => request.post('/sys/user', data)
+
+// 删除员工
+export function reqDelEmployee(id) {
+  return request({
+    method: 'delete',
+    url: `/sys/user/${id}`
+  })
+}
