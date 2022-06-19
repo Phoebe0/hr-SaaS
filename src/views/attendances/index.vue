@@ -1,9 +1,12 @@
 <template>
   <div class="attendances-container">
     <div class="app-container">
-      <h2>
-        首页
-      </h2>
+      <h4>
+        出勤
+      </h4>
+      <el-button @click="$router.push('/import?name=attendances')">
+        导入出勤
+      </el-button>
     </div>
   </div>
 </template>

@@ -15,9 +15,14 @@ export const reqGetEmployeesList = (page, size) => request.get('/sys/user', {
 export const reqAddEmployee = data => request.post('/sys/user', data)
 
 // 删除员工
-export function reqDelEmployee(id) {
-  return request({
+export const reqDelEmployee = (id) => request({
     method: 'delete',
     url: `/sys/user/${id}`
   })
-}
+
+// 批量导入员工  data [{}]
+export const reqImportEmployees = data => request({
+  method: 'post',
+  url: '/sys/user/batch',
+  data
+})

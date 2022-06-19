@@ -4,8 +4,16 @@
       <PageTools>
         <template #left> 总记录数： {{ total }}</template>
         <template #right>
-          <el-button size="mini" type="success">excel导入</el-button>
-          <el-button size="mini" type="primary">excel导出</el-button>
+          <el-button
+            size="mini"
+            type="success"
+            @click="$router.push('/import?name=employees')"
+          >excel导入</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleDownload"
+          >excel导出</el-button>
           <el-button size="mini" type="warning" @click="dialogVisible = true">新增员工</el-button>
         </template>
       </PageTools>
@@ -142,7 +150,66 @@ export default {
         }).catch(() => {
           this.$message.info('已取消')
         })
-  }
+  },
+  // 导出员工excel表
+    async handleDownload() {
+      const { data: { data: { rows }}} = await reqGetEmployeesList(1, this.total)
+      // const headersArr = ['姓名', '手机号', '入职日期', '聘用形式', '转正日期', '工号', '部门']
+      const mapRules = {
+        '姓名': 'username',
+        '手机号': 'mobile',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+      const merges = ['A1:A2', 'B1:F1', 'G1:G2']
+      const data = this.formatToArr(rows, mapRules)
+      // 1. 先拿到所有员工列表
+
+      // 我们需要的是二维数组,所以需要对rows进行处理
+      // 1. 将数组处理成二维数组
+      // 2. 将不需要的字段剔除
+      console.log(data) // 所有员工列表
+
+      // 在点击了导出按钮后import 再去加载对应的js模块
+      import('@/vendor/Export2Excel').then(excel => {
+        // excel是1个对象
+        excel.export_json_to_excel({
+          header: Object.keys(mapRules),
+          data, // 二维数组
+          filename: '员工信息表', // 导出的excel文件名称
+          autoWidth: true, // 自适应宽度
+          bookType: 'xlsx', // 导出的excel文件扩展名
+          multiHeader,
+          merges
+
+        })
+      })
+    },
+
+    // 返回二维数组
+    formatToArr(rows, mapRules) {
+    return rows.map(item => {
+      // item是每一个员工对象
+      return Object.keys(mapRules).map(value => {
+        // value是标题数组的每一项(字符串)
+        // console.log(value) // 中文的键名
+        const englishKey = mapRules[value] // 英文的键名
+        // 处理日期相关的bug
+        if (['correctionTime', 'timeOfEntry'].includes(englishKey)) {
+          return formatDate(item[englishKey])
+        } else if (englishKey === 'formOfEmployment') {
+          const o = employeesMenu.hireType.find(elem => elem.id === +item[englishKey])
+          return o ? o.value : '暂无'
+        } else {
+         return item[englishKey] // 将取到的值,追加到数组中
+        }
+      })
+     })
+    }
   }
 }
 </script>
