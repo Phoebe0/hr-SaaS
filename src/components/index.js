@@ -3,11 +3,13 @@
 // install 方法在调用时，会将Vue作为参数传入
 import PageTools from './PageTools'
 import UploadExcel from './UploadExcel'
+import UploadImage from './UploadImage'
 
 export default {
   install(Vue) {
     Vue.component(PageTools.name, PageTools)
     Vue.component(UploadExcel.name, UploadExcel)
+    Vue.component(UploadImage.name, UploadImage)
   }
 }
 // export default function() {}

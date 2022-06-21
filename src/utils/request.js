@@ -19,7 +19,7 @@ service.interceptors.request.use(function(config) {
     lock: true,
     text: '大大请稍等~',
     spinner: 'el-icon-loading',
-    background: 'rgba(0, 0, 0, 0.6)'
+    background: 'rgba(0, 0, 0, 0.7)'
   })
   // 在发送请求之前做些什么
   console.log('请求拦截')
@@ -42,6 +42,7 @@ service.interceptors.response.use(function(response) {
     Message.error(response.data.message)
     // 失败了，不能再跳转了
     // 抛出异常 阻止后续代码的执行
+    loading.close()
     return Promise.reject(response.data.message)
   }
   loading.close()

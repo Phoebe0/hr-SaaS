@@ -30,3 +30,10 @@ export function reqGetUserDetailById(id) {
     url: `/sys/user/${id}`
   })
 }
+
+// 保存员工基本信息
+export const reqSaveUserDetailById = data => request({
+  method: 'put',
+  url: `/sys/user/${data.id}`,
+  data
+})
