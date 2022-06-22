@@ -28,7 +28,17 @@
         >
           <el-table-column label="序号" type="index" :index="indexMethod" sortable="" />
           <el-table-column label="姓名" prop="username" sortable="" />
-          <el-table-column label="头像" prop="staffPhoto" sortable="" />
+          <el-table-column label="头像" sortable="">
+            <!-- 作用域插槽 处理头像 -->
+            <template #default="{row}">
+              <img
+                v-imgerr
+                :src="row.staffPhoto || 'xxx'"
+                style="width: 130px; height: 150px; border-radius: 50%"
+                @click="showUrlCode(row.staffPhoto)"
+              >
+            </template>
+          </el-table-column>
           <el-table-column label="手机号" prop="mobile" sortable="" />
           <el-table-column label="工号" prop="workNumber" sortable="" />
           <el-table-column
@@ -78,6 +88,21 @@
         />
 
       </el-card>
+
+      <!-- 展示二维码 -->
+      <el-dialog
+        title="二维码"
+        :visible.sync="showCodeVisible"
+        width="23%"
+        @close="showCodeVisible = false"
+      >
+        <!-- 二维码的容器，vue再更新dom时是异步的 -->
+        <div style="text-algin: center">
+
+          <canvas ref="codeBox" />
+        </div>
+
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -87,6 +112,7 @@ import { reqDelEmployee, reqGetEmployeesList } from '@/api/employees'
 import employeesMenu from '@/api/constant/employees'
 import AddEmployees from './components/AddEmployees.vue'
 import { formatDate } from '@/utils/index'
+import qrcode from 'qrcode'
 export default {
   name: 'Employees',
   components: {
@@ -98,7 +124,8 @@ export default {
       total: 0,
       page: 1,
       size: 2,
-      dialogVisible: false
+      dialogVisible: false, // 新增员工对话框控制的布尔值
+      showCodeVisible: false // 展示头像二维码的布尔值
     }
   },
   created() {
@@ -136,26 +163,26 @@ export default {
     const o = employeesMenu.hireType.find(item => item.id === +cellValue)
     return o ? o.value : '查询暂无'
    },
-  //  日期格式化
-  formatDate(time) {
-    return formatDate(time) // 直接调用工具函数
-  },
-  // 删除员工
-  delEmployee(id) {
-    this.$confirm('确定删除该员工?', '提示', {
-          type: 'warning'
-        }).then(async() => {
-          await reqDelEmployee(id)
-          if (this.tableData.length === 1 && this.page > 1) {
-            this.page--
-            // this.getEmployeesList()
-          }
-          this.getEmployeesList()
-        }).catch(() => {
-          this.$message.info('已取消')
-        })
-  },
-  // 导出员工excel表
+    //  日期格式化
+    formatDate(time) {
+      return formatDate(time) // 直接调用工具函数
+    },
+    // 删除员工
+    delEmployee(id) {
+      this.$confirm('确定删除该员工?', '提示', {
+            type: 'warning'
+          }).then(async() => {
+            await reqDelEmployee(id)
+            if (this.tableData.length === 1 && this.page > 1) {
+              this.page--
+              // this.getEmployeesList()
+            }
+            this.getEmployeesList()
+          }).catch(() => {
+            this.$message.info('已取消')
+          })
+    },
+    // 导出员工excel表
     async handleDownload() {
       const { data: { data: { rows }}} = await reqGetEmployeesList(1, this.total)
       // const headersArr = ['姓名', '手机号', '入职日期', '聘用形式', '转正日期', '工号', '部门']
@@ -209,10 +236,21 @@ export default {
           const o = employeesMenu.hireType.find(elem => elem.id === +item[englishKey])
           return o ? o.value : '暂无'
         } else {
-         return item[englishKey] // 将取到的值,追加到数组中
+          return item[englishKey] // 将取到的值,追加到数组中
         }
       })
-     })
+      })
+    },
+    // 点击头像展示二维码
+    showUrlCode(url) {
+      if (!url) return this.$message.warning('不能展示系统默认头像')
+      this.showCodeVisible = true
+      // qrcode.toCanvas(容器，信息)
+      // 控制对话框的布尔值默认是false,二维码的容器不会被创建，当布尔值更新为true后，dom会更新，但是是异步的
+      this.$nextTick(() => {
+        qrcode.toCanvas(this.$refs.codeBox, url)
+      })
+      console.log('展示二维码')
     }
   }
 }

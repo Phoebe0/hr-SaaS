@@ -57,7 +57,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
-
+            <UploadImage ref="staffPhotoRef" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -86,9 +86,9 @@
         </el-form-item>
         <!-- 个人头像 -->
         <!-- 员工照片 -->
-
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <UploadImage ref="staffPicRef" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -375,19 +375,28 @@ methods: {
   async getUserDetailById() {
     const { data: { data }} = await reqGetUserDetailById(this.userId)
     this.userInfo = data
+    // 通知ref找子组件，设置url
+    this.$refs.staffPhotoRef.fileList = [{ url: this.userInfo.staffPhoto }]
   },
   async saveUser() {
     //  调用父组件
-    await reqSaveUserDetailById(this.userInfo)
-    // this.$message.success('保存成功')
+    if (!this.$refs.staffPhotoRef.fileList.length || !this.$refs.staffPhotoRef.fileList[0].url) return this.$message.error('请上传员工头像')
+    // 如果未上传完，禁止保存提交
+    if (!this.$refs.staffPhotoRef.isAllFinished) return this.$message.info('等待上传完毕再保存')
+    await reqSaveUserDetailById({ ...this.userInfo, staffPhoto: this.$refs.staffPhotoRef.fileList[0].url }) //  重写头像的地址
   },
 
   async getPersonalDetail() {
     const { data: { data }} = await reqGetPersonalDetail(this.userId) // 获取员工数据
     this.formData = data
+    // 通知ref找子组件，设置url
+    this.$refs.staffPicRef.fileList = [{ url: this.formData.staffPhoto }]
   },
   async savePersonal() {
-    await reqUpdatePersonal({ ...this.formData, id: this.userId })
+    if (!this.$refs.staffPicRef.fileList.length || !this.$refs.staffPicRef.fileList[0].url) return this.$message.error('请上传员工照片')
+    // 如果未上传完，禁止保存提交
+    if (!this.$refs.staffPicRef.isAllFinished) return this.$message.info('等待上传完毕再保存')
+    await reqUpdatePersonal({ ...this.formData, id: this.userId, staffPhoto: this.$refs.staffPicRef.fileList[0].url })
     // this.$message.success('保存成功')
   }
 }
