@@ -19,6 +19,9 @@ import * as directives from '@/directives' // 将directives中的所有按需导
 
 import MyUI from '@/components/index'
 import moment from 'moment'
+import Print from 'vue-print-nb'
+
+Vue.use(Print)
 
 Vue.use(MyUI)
 Vue.filter('formatDate', (val, payload) => {

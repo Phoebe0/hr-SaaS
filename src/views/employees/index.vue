@@ -63,7 +63,7 @@
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
+              <el-button type="text" size="small" @click="editRole(row.id)">角色</el-button>
               <el-button type="text" size="small" @click="delEmployee(row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -103,6 +103,7 @@
         </div>
 
       </el-dialog>
+      <AssignRole :show-role-visible.sync="showRoleVisible" :assign-id="assignId" />
     </div>
   </div>
 </template>
@@ -111,12 +112,14 @@
 import { reqDelEmployee, reqGetEmployeesList } from '@/api/employees'
 import employeesMenu from '@/api/constant/employees'
 import AddEmployees from './components/AddEmployees.vue'
+import AssignRole from './components/AssignRole.vue'
 import { formatDate } from '@/utils/index'
 import qrcode from 'qrcode'
 export default {
   name: 'Employees',
   components: {
-    AddEmployees
+    AddEmployees,
+    AssignRole
   },
   data() {
     return {
@@ -125,7 +128,9 @@ export default {
       page: 1,
       size: 2,
       dialogVisible: false, // 新增员工对话框控制的布尔值
-      showCodeVisible: false // 展示头像二维码的布尔值
+      showCodeVisible: false, // 展示头像二维码的布尔值
+      showRoleVisible: false, // 分配权限对话框
+      assignId: ''
     }
   },
   created() {
@@ -251,6 +256,11 @@ export default {
         qrcode.toCanvas(this.$refs.codeBox, url)
       })
       console.log('展示二维码')
+    },
+    // 分配角色展示对话框
+    editRole(id) {
+      this.assignId = id
+      this.showRoleVisible = true
     }
   }
 }

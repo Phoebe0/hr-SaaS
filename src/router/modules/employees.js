@@ -13,6 +13,15 @@ import Layout from '@/layout'
         name: 'detail',
         component: () => import('@/views/employees/Detail'),
         hidden: true
+    },
+    // 员工打印页
+    {
+      path: 'print/:id',
+      component: () => import('@/views/employees/Print'),
+      hidden: true,
+      meta: {
+        title: '员工打印'
+      }
     }
   ]
   }
