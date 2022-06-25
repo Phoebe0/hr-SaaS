@@ -22,3 +22,13 @@ export const reqUpdateRole = data => request.put(`/sys/role/${data.id}`, data)
 
 // 根据id获取角色详情
 export const reqGetRoleDetail = id => request.get(`/sys/role/${id}`)
+
+// 为角色分配权限
+// 给角色分配权限
+export function reqSetRights(data) {
+  return request({
+    url: '/sys/role/assignPrem',
+    method: 'put',
+    data
+  })
+}

@@ -48,6 +48,7 @@
                     size="mini"
                     type="text"
                     style="color:lightgreen"
+                    @click="showRightsDialog(row.id)"
                   >分配权限</el-button>
                   <el-button
                     size="mini"
@@ -128,6 +129,30 @@
             </template>
           </el-dialog>
 
+          <!-- 分配权限对话框 -->
+          <el-dialog
+            title="分配权限"
+            :visible="showRolesVisible"
+            width="60%"
+            center
+            @close="showRolesVisible = false"
+          >
+            <el-tree
+              ref="treeRef"
+              :data="permissionList"
+              :props="{label: 'name'}"
+              show-checkbox
+              check-strictly
+              default-expand-all
+              node-key="id"
+            />
+
+            <template #footer>
+              <el-button @click="showRolesVisible = false">取消</el-button>
+              <el-button type="primary" @click="setRoles()">确认</el-button>
+            </template>
+          </el-dialog>
+
         </el-tabs>
       </el-card>
     </div>
@@ -135,12 +160,15 @@
 </template>
 
 <script>
-import { reqAddRole, reqDelRole, reqGetRoleDetail, reqGetRolesList, reqUpdateRole } from '@/api/settings'
+import { reqAddRole, reqDelRole, reqGetRoleDetail, reqGetRolesList, reqSetRights, reqUpdateRole } from '@/api/settings'
 import { reqGetCompanyInfo } from '@/api/company'
+import { reqGetPermissionList } from '@/api/permission'
+import { tranListToTreeData } from '@/utils/index'
 export default {
   name: 'Setting',
   data() {
     return {
+      roleId: '', // 分配权限的角色id
        activeName: 'role',
        tableData: [], // 表格数据
        total: 0, // 总条数
@@ -148,6 +176,7 @@ export default {
        pagesize: 2, // 每条页数
        companyInfo: {},
        showDialog: false,
+       showRolesVisible: false, // 分配权限对话框
        form: {
         name: '',
         description: ''
@@ -162,12 +191,13 @@ export default {
         description: [
           { required: true, message: '请输入角色描述', trigger: ['change', 'blur'] }
         ]
-      }
+      },
+      permissionList: [], // 权限列表
+      permIds: [] // 用户已有权限列表
     }
   },
   created() {
     this.getRolesList()
-    this.addRole()
   },
    methods: {
     // tabs组件点击的处理函数
@@ -272,7 +302,30 @@ export default {
         const { data } = await reqGetCompanyInfo(this.$store.state.user.userInfo.companyId)
         // console.log(data.data)
         this.companyInfo = data.data
+      },
+      // 分配权限对话框 点击分配角色按钮 查询当前角色权限
+      async showRightsDialog(id) {
+        // 存储要分配权限的角色id
+        this.roleId = id
+        this.permIds = [] // 先置空 保证权限列表从无到有
+        const { data: { data }} = await reqGetPermissionList()
+        this.permissionList = tranListToTreeData(data, '0')
+        this.showRolesVisible = true
+
+        const { data: { data: { permIds }}} = await reqGetRoleDetail(id)
+        this.permIds = permIds // 当前角色已有权限列表
+        this.$refs.treeRef.setCheckedKeys(this.permIds)
+      },
+      // 分配权限
+      async setRoles() {
+        // 获取已选中节点  this.$refs.treeRef.getCheckedKeys()
+        await reqSetRights({
+          id: this.roleId,
+          permIds: this.$refs.treeRef.getCheckedKeys()
+        })
+        this.showRolesVisible = false
       }
+
     }
 }
 </script>
